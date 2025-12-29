@@ -1,0 +1,122 @@
+@import "tailwindcss";
+
+/* Enable `.dark` variant */
+@custom-variant dark (&:is(.dark *));
+
+/* ============================
+   THEME TOKEN MAPPING (Tailwind v4)
+   ============================ */
+@theme inline {
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+
+  --color-background: hsl(var(--background));
+  --color-foreground: hsl(var(--foreground));
+
+  --color-card: hsl(var(--card));
+  --color-card-foreground: hsl(var(--card-foreground));
+
+  --color-popover: hsl(var(--popover));
+  --color-popover-foreground: hsl(var(--popover-foreground));
+
+  --color-primary: hsl(var(--primary));
+  --color-primary-foreground: hsl(var(--primary-foreground));
+
+  --color-secondary: hsl(var(--secondary));
+  --color-secondary-foreground: hsl(var(--secondary-foreground));
+
+  --color-muted: hsl(var(--muted));
+  --color-muted-foreground: hsl(var(--muted-foreground));
+
+  --color-accent: hsl(var(--accent));
+  --color-accent-foreground: hsl(var(--accent-foreground));
+
+  --color-destructive: hsl(var(--destructive));
+  --color-destructive-foreground: hsl(var(--destructive-foreground));
+
+  --color-border: hsl(var(--border));
+  --color-input: hsl(var(--input));
+  --color-ring: hsl(var(--ring));
+}
+
+/* =========================================================
+   DEFAULT THEME = DARK (Revised: Navy/Blue-gray like screenshot)
+   ========================================================= */
+:root {
+  /* Background + text */
+  --background: 222 35% 9%;         /* deep navy */
+  --foreground: 210 40% 98%;        /* near-white */
+
+  /* Surfaces (cards/panels) */
+  --card: 222 30% 12%;              /* slightly lighter than bg */
+  --card-foreground: 210 40% 98%;
+
+  --popover: 222 30% 12%;
+  --popover-foreground: 210 40% 98%;
+
+  /* Primary = rich blue (buttons/links) */
+  --primary: 221 83% 53%;           /* blue-600-ish */
+  --primary-foreground: 210 40% 98%;
+
+  /* Secondary = panel background */
+  --secondary: 222 25% 14%;
+  --secondary-foreground: 210 40% 98%;
+
+  /* Muted */
+  --muted: 222 25% 14%;
+  --muted-foreground: 215 20% 70%;  /* like white/70 */
+
+  /* Accent = emerald (for bullets/highlights) */
+  --accent: 160 84% 39%;
+  --accent-foreground: 210 40% 98%;
+
+  /* Destructive */
+  --destructive: 0 84% 60%;
+  --destructive-foreground: 210 40% 98%;
+
+  /* Borders/inputs/ring */
+  --border: 220 22% 22%;            /* subtle dark border */
+  --input: 220 22% 22%;
+  --ring: 221 83% 53%;
+
+  --radius: 1rem;
+  --font-sans: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+}
+
+/* Optional: light theme if you ever need it */
+.light {
+  --background: 0 0% 100%;
+  --foreground: 222 47% 11%;
+  --card: 0 0% 100%;
+  --card-foreground: 222 47% 11%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 222 47% 11%;
+  --primary: 221 83% 53%;
+  --primary-foreground: 210 40% 98%;
+  --secondary: 210 40% 96%;
+  --secondary-foreground: 222 47% 11%;
+  --muted: 210 40% 96%;
+  --muted-foreground: 215 16% 47%;
+  --accent: 210 40% 96%;
+  --accent-foreground: 222 47% 11%;
+  --destructive: 0 84% 60%;
+  --destructive-foreground: 210 40% 98%;
+  --border: 220 13% 91%;
+  --input: 220 13% 91%;
+  --ring: 221 83% 53%;
+}
+
+/* ============================
+   BASE STYLES
+   ============================ */
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+  }
+}

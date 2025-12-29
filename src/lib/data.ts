@@ -1,0 +1,295 @@
+import type { LucideIcon } from "lucide-react";
+import { Sparkles, Drill, ShieldCheck, Hammer, Smile, Trash2 } from "lucide-react";
+
+import heroImage from "../../public/images/clinica.png";
+
+//resin images
+import resinImage from "../../public/images/resin.png";
+import resinBeforeImage from "../../public/images/resin_before.png";
+import resinAfterImage from "../../public/images/resin_after.png";
+
+//crown images
+import crownImage from "../../public/images/crown.png";
+import crownBeforeImage from "../../public/images/crown_before.png";
+import crownAfterImage from "../../public/images/crown_after.png";
+
+
+//root-canal
+import rootImage from "../../public/images/root.png";
+import rootBeforeImage from "../../public/images/root_before.png";
+import rootAfterImage from "../../public/images/root_after.png";
+
+
+import implantImage from "../../public/images/image3.png";
+import bracesImage from "../../public/images/image4.png";
+import damagedToothImage from "../../public/images/image5.png";
+
+export interface Step {
+  title: string;
+  description: string;
+  image?: string;
+}
+
+export interface Procedure {
+  id: string;
+  title: string;
+  shortDescription: string;
+  fullDescription: string;
+  icon: LucideIcon;
+  image: string;
+  steps: Step[];
+  beforeImage?: string;
+  afterImage?: string;
+  benefits: string[];
+  duration: string;
+  painLevel: "Bajo" | "Medio" | "Alto";
+}
+
+export const procedures: Procedure[] = [
+  {
+  id: "resinas",
+  title: "Resinas dentales (Empastes)",
+  shortDescription: "Reparan caries y dientes dañados de forma natural y estética.",
+  fullDescription: "Las resinas dentales se utilizan para reparar dientes con caries, fracturas o desgaste. Son del mismo color del diente, por lo que el resultado se ve natural y casi no se nota. Además de mejorar la apariencia, ayudan a que el diente recupere su fuerza y funcione correctamente al masticar.",
+  icon: Sparkles,
+  image: resinImage,
+  beforeImage: resinBeforeImage,
+  afterImage: resinAfterImage,
+  duration: "30 a 60 minutos",
+  painLevel: "Bajo",
+  benefits: [
+    "Se ven naturales y no se notan",
+    "Ayudan a conservar el diente",
+    "El tratamiento es rápido",
+    "Generalmente se realiza en una sola cita",
+    "Mejoran la función al masticar"
+  ],
+  steps: [
+    {
+      title: "1. Limpieza del diente",
+      description: "Retiramos la caries o la parte dañada del diente para dejarlo limpio y listo para el tratamiento.",
+    },
+    {
+      title: "2. Preparación",
+      description: "Preparamos el diente para que la resina se adhiera correctamente.",
+    },
+    {
+      title: "3. Colocación de la resina",
+      description: "Aplicamos la resina del color de tu diente y le damos la forma adecuada.",
+    },
+    {
+      title: "4. Endurecimiento",
+      description: "Usamos una luz especial para endurecer la resina en pocos segundos.",
+    },
+    {
+      title: "5. Ajuste y pulido",
+      description: "Ajustamos la mordida y pulimos el diente para que se sienta cómodo y se vea natural.",
+    }
+  ]
+},
+  {
+  id: "coronas",
+  title: "Coronas dentales",
+  shortDescription: "Protegen y refuerzan dientes muy dañados o debilitados.",
+  fullDescription: "Una corona dental es una funda que cubre completamente el diente para protegerlo y devolverle su forma y fuerza. Se recomienda cuando un diente está muy desgastado, roto o después de una endodoncia. Además de protegerlo, la corona mejora la apariencia del diente y permite masticar con normalidad.",
+  icon: ShieldCheck,
+  image: crownImage,
+  beforeImage: crownBeforeImage,
+  afterImage: crownAfterImage,
+  duration: "2 citas",
+  painLevel: "Bajo",
+  benefits: [
+    "Protege dientes débiles o dañados",
+    "Devuelve la fuerza al diente",
+    "Mejora la apariencia de la sonrisa",
+    "Permite masticar con mayor seguridad",
+    "Tiene una larga duración"
+  ],
+  steps: [
+    {
+      title: "1. Preparación del diente",
+      description: "Ajustamos el diente para que la corona encaje correctamente y quede cómoda.",
+    },
+    {
+      title: "2. Toma de medidas",
+      description: "Tomamos un molde o escaneo del diente para fabricar la corona a la medida exacta.",
+    },
+    {
+      title: "3. Corona provisional",
+      description: "Colocamos una corona temporal para proteger el diente mientras se elabora la definitiva.",
+    },
+    {
+      title: "4. Colocación final",
+      description: "En la segunda cita colocamos y fijamos la corona definitiva para que puedas usarla con normalidad.",
+    }
+  ]
+}
+,
+  {
+  id: "endodoncia",
+  title: "Endodoncia (Tratamiento de conducto)",
+  shortDescription: "Elimina la infección del diente y quita el dolor, conservando el diente natural.",
+  fullDescription: "La endodoncia, también conocida como tratamiento de conducto, se realiza cuando el nervio del diente está infectado o muy inflamado. Este tratamiento permite eliminar la infección desde el interior del diente, aliviar el dolor y evitar que el diente tenga que ser extraído. Después del tratamiento, el diente puede seguir funcionando normalmente con la protección adecuada.",
+  icon: Drill,
+  image: rootImage, 
+  beforeImage: rootBeforeImage,
+  afterImage: rootAfterImage,
+  duration: "1 a 2 citas",
+  painLevel: "Medio",
+  benefits: [
+    "Elimina el dolor causado por la infección",
+    "Salva el diente natural",
+    "Evita la extracción del diente",
+    "Detiene la infección y evita que se propague",
+    "Permite seguir masticando con normalidad"
+  ],
+  steps: [
+    {
+      title: "1. Acceso al diente",
+      description: "Abrimos el diente cuidadosamente para poder llegar al nervio y a los conductos internos.",
+    },
+    {
+      title: "2. Limpieza profunda",
+      description: "Retiramos el nervio dañado y limpiamos el interior del diente para eliminar bacterias e infección.",
+    },
+    {
+      title: "3. Sellado del diente",
+      description: "Rellenamos y sellamos los conductos para evitar que la infección vuelva a aparecer.",
+    },
+    {
+      title: "4. Restauración final",
+      description: "Reconstruimos el diente para devolverle su función y, en muchos casos, colocamos una corona para protegerlo.",
+    }
+  ]
+}
+,
+  {
+    id: "implantes",
+    title: "Implantes Dentales",
+    shortDescription: "La mejor solución para reemplazar dientes perdidos.",
+    fullDescription: "Un implante es un pequeño tornillo de titanio que sustituye la raíz de un diente perdido. Sobre él se coloca una corona que se ve y funciona como un diente real.",
+    icon: Hammer,
+    image: implantImage,
+    duration: "3-6 meses",
+    painLevel: "Medio",
+    benefits: [
+      "Solución permanente",
+      "Previene la pérdida de hueso",
+      "No afecta a dientes vecinos",
+      "Sensación de diente natural"
+    ],
+    steps: [
+      {
+        title: "1. Colocación",
+        description: "Insertamos el implante en el hueso maxilar con una pequeña cirugía.",
+      },
+      {
+        title: "2. Integración",
+        description: "Esperamos unos meses para que el hueso se fusione con el implante (oseointegración).",
+      },
+      {
+        title: "3. Pilar",
+        description: "Colocamos una pieza conectora sobre el implante.",
+      },
+      {
+        title: "4. Corona",
+        description: "Fijamos la corona definitiva sobre el pilar.",
+      }
+    ]
+  },
+  {
+    id: "ortodoncia",
+    title: "Ortodoncia",
+    shortDescription: "Alineación dental para una sonrisa perfecta y funcional.",
+    fullDescription: "La ortodoncia corrige la posición de los dientes y la mandíbula. Puede ser con brackets tradicionales o alineadores invisibles.",
+    icon: Smile,
+    image: bracesImage,
+    duration: "12-24 meses",
+    painLevel: "Bajo",
+    benefits: [
+      "Sonrisa estética",
+      "Mejora la mordida y masticación",
+      "Facilita la higiene dental",
+      "Previene desgaste dental"
+    ],
+    steps: [
+      {
+        title: "1. Estudio",
+        description: "Radiografías, fotos y escaneo para planificar el movimiento de los dientes.",
+      },
+      {
+        title: "2. Colocación",
+        description: "Instalamos los brackets o entregamos los primeros alineadores.",
+      },
+      {
+        title: "3. Ajustes",
+        description: "Citas mensuales para activar el movimiento dental.",
+      },
+      {
+        title: "4. Retención",
+        description: "Uso de retenedores para mantener los dientes en su nueva posición.",
+      }
+    ]
+  },
+  {
+    id: "limpieza",
+    title: "Limpieza Dental",
+    shortDescription: "Profilaxis para mantener encías y dientes sanos.",
+    fullDescription: "La limpieza profesional elimina el sarro y la placa que el cepillado normal no puede quitar. Es esencial para prevenir enfermedades de las encías.",
+    icon: Sparkles, 
+    image: heroImage, 
+    duration: "30-45 min",
+    painLevel: "Bajo",
+    benefits: [
+      "Previene gingivitis",
+      "Elimina mal aliento",
+      "Dientes más brillantes",
+      "Detección temprana de problemas"
+    ],
+    steps: [
+      {
+        title: "1. Ultrasonido",
+        description: "Vibraciones ultrasónicas desprenden el sarro duro.",
+      },
+      {
+        title: "2. Pulido",
+        description: "Eliminamos manchas superficiales y alisamos el esmalte.",
+      },
+      {
+        title: "3. Flúor",
+        description: "Aplicación opcional de flúor para fortalecer el esmalte.",
+      }
+    ]
+  },
+  {
+    id: "extraccion",
+    title: "Extracción",
+    shortDescription: "Retiro seguro de dientes dañados o muelas del juicio.",
+    fullDescription: "La extracción se realiza cuando un diente no puede salvarse o para evitar problemas futuros (como con las muelas del juicio).",
+    icon: Trash2,
+    image: damagedToothImage,
+    duration: "20-40 min",
+    painLevel: "Bajo",
+    benefits: [
+      "Elimina la fuente de infección",
+      "Alivia el dolor severo",
+      "Prepara para ortodoncia o implantes"
+    ],
+    steps: [
+      {
+        title: "1. Anestesia",
+        description: "Adormecemos completamente la zona.",
+      },
+      {
+        title: "2. Extracción",
+        description: "Retiramos el diente con cuidado para preservar el hueso.",
+      },
+      {
+        title: "3. Recuperación",
+        description: "Colocamos una gasa y damos instrucciones de cuidado post-operatorio.",
+      }
+    ]
+  }
+];
+
+export { heroImage };
