@@ -19,10 +19,26 @@ import rootImage from "../../public/images/root.png";
 import rootBeforeImage from "../../public/images/root_before.png";
 import rootAfterImage from "../../public/images/root_after.png";
 
+//implants
+import implantImage from "../../public/images/implant.png";
+import implantBeforeImage from "../../public/images/implant_before.png";
+import implantAfterImage from "../../public/images/implant_after.png";
 
-import implantImage from "../../public/images/image3.png";
-import bracesImage from "../../public/images/image4.png";
-import damagedToothImage from "../../public/images/image5.png";
+//braces
+import bracesImage from "../../public/images/braces.png";
+import bracesBeforeImage from "../../public/images/braces_before.png";
+import bracesAfterImage from "../../public/images/braces_after.png";
+
+//cleaning
+import cleaningImage from "../../public/images/cleaning.png";
+import cleaningBeforeImage from "../../public/images/cleaning_before.png";
+import cleaningAfterImage from "../../public/images/cleaning_after.png";
+
+//cleaning
+import extractionImage from "../../public/images/extraction.png";
+import extractionBeforeImage from "../../public/images/extraction_before.png";
+import extractionAfterImage from "../../public/images/extraction_after.png";
+
 
 export interface Step {
   title: string;
@@ -165,131 +181,144 @@ export const procedures: Procedure[] = [
 ,
   {
     id: "implantes",
-    title: "Implantes Dentales",
-    shortDescription: "La mejor solución para reemplazar dientes perdidos.",
-    fullDescription: "Un implante es un pequeño tornillo de titanio que sustituye la raíz de un diente perdido. Sobre él se coloca una corona que se ve y funciona como un diente real.",
+    title: "Implantes dentales",
+    shortDescription: "Reemplazan dientes perdidos de forma segura, estética y duradera.",
+    fullDescription: "Un implante dental es una raíz artificial hecha de titanio que se coloca en el hueso para reemplazar un diente perdido. Con el tiempo, el implante se integra al hueso y funciona como la base de un nuevo diente. Sobre el implante se coloca una corona que se ve, se siente y funciona como un diente natural, permitiendo comer y sonreír con confianza.",
     icon: Hammer,
-    image: implantImage,
-    duration: "3-6 meses",
+    image: implantImage, 
+    beforeImage: implantBeforeImage,
+    afterImage: implantAfterImage,
+    duration: "3 a 6 meses",
     painLevel: "Medio",
     benefits: [
-      "Solución permanente",
-      "Previene la pérdida de hueso",
-      "No afecta a dientes vecinos",
-      "Sensación de diente natural"
+      "Reemplazo fijo y duradero del diente perdido",
+      "Ayuda a prevenir la pérdida de hueso",
+      "No requiere desgastar dientes vecinos",
+      "Mejora la masticación y el habla",
+      "Apariencia y sensación de diente natural"
     ],
     steps: [
       {
-        title: "1. Colocación",
-        description: "Insertamos el implante en el hueso maxilar con una pequeña cirugía.",
+        title: "1. Colocación del implante",
+        description: "Colocamos el implante en el hueso mediante un procedimiento controlado y seguro.",
       },
       {
-        title: "2. Integración",
-        description: "Esperamos unos meses para que el hueso se fusione con el implante (oseointegración).",
+        title: "2. Integración al hueso",
+        description: "Esperamos el tiempo necesario para que el hueso se una firmemente al implante y le dé estabilidad.",
       },
       {
-        title: "3. Pilar",
-        description: "Colocamos una pieza conectora sobre el implante.",
+        title: "3. Colocación del conector",
+        description: "Colocamos una pequeña pieza que conecta el implante con el diente definitivo.",
       },
       {
-        title: "4. Corona",
-        description: "Fijamos la corona definitiva sobre el pilar.",
+        title: "4. Colocación de la corona",
+        description: "Fijamos el diente definitivo sobre el implante para restaurar la función y la estética.",
       }
     ]
   },
   {
     id: "ortodoncia",
     title: "Ortodoncia",
-    shortDescription: "Alineación dental para una sonrisa perfecta y funcional.",
-    fullDescription: "La ortodoncia corrige la posición de los dientes y la mandíbula. Puede ser con brackets tradicionales o alineadores invisibles.",
+    shortDescription: "Alinea los dientes para mejorar la sonrisa y la mordida.",
+    fullDescription: "La ortodoncia es un tratamiento que ayuda a acomodar los dientes y mejorar la mordida. Puede realizarse con brackets tradicionales o con alineadores transparentes, según cada caso. Además de mejorar la apariencia de la sonrisa, facilita la limpieza dental y ayuda a prevenir problemas futuros como desgaste o dolor en la mandíbula.",
     icon: Smile,
-    image: bracesImage,
-    duration: "12-24 meses",
+    image: bracesImage, 
+    beforeImage: bracesBeforeImage,
+    afterImage: bracesAfterImage,
+    duration: "12 a 24 meses",
     painLevel: "Bajo",
     benefits: [
-      "Sonrisa estética",
-      "Mejora la mordida y masticación",
-      "Facilita la higiene dental",
-      "Previene desgaste dental"
+      "Mejora la apariencia de la sonrisa",
+      "Corrige la mordida y la forma de masticar",
+      "Facilita la limpieza de los dientes",
+      "Ayuda a prevenir desgaste y problemas dentales",
+      "Resultados duraderos con el cuidado adecuado"
     ],
     steps: [
       {
-        title: "1. Estudio",
-        description: "Radiografías, fotos y escaneo para planificar el movimiento de los dientes.",
+        title: "1. Evaluación y estudio",
+        description: "Realizamos estudios como radiografías, fotografías y escaneos para planificar el tratamiento.",
       },
       {
-        title: "2. Colocación",
-        description: "Instalamos los brackets o entregamos los primeros alineadores.",
+        title: "2. Inicio del tratamiento",
+        description: "Colocamos los brackets o entregamos los primeros alineadores, según el tipo de ortodoncia.",
       },
       {
-        title: "3. Ajustes",
-        description: "Citas mensuales para activar el movimiento dental.",
+        title: "3. Ajustes periódicos",
+        description: "Programamos citas de seguimiento para ir moviendo los dientes de forma gradual y segura.",
       },
       {
         title: "4. Retención",
-        description: "Uso de retenedores para mantener los dientes en su nueva posición.",
+        description: "Al finalizar el tratamiento, indicamos el uso de retenedores para mantener los dientes alineados.",
       }
     ]
   },
   {
     id: "limpieza",
-    title: "Limpieza Dental",
-    shortDescription: "Profilaxis para mantener encías y dientes sanos.",
-    fullDescription: "La limpieza profesional elimina el sarro y la placa que el cepillado normal no puede quitar. Es esencial para prevenir enfermedades de las encías.",
+    title: "Limpieza dental",
+    shortDescription: "Mantiene dientes y encías limpios y saludables.",
+    fullDescription: "La limpieza dental profesional elimina el sarro y la placa que no se pueden quitar solo con el cepillado diario. Este tratamiento ayuda a mantener las encías sanas, prevenir infecciones y detectar a tiempo posibles problemas dentales. Es recomendable realizarla de forma periódica para conservar una buena salud bucal.",
     icon: Sparkles, 
-    image: heroImage, 
-    duration: "30-45 min",
+    image: cleaningImage, 
+    beforeImage: cleaningBeforeImage,
+    afterImage: cleaningAfterImage,
+    duration: "30 a 45 minutos",
     painLevel: "Bajo",
     benefits: [
-      "Previene gingivitis",
-      "Elimina mal aliento",
-      "Dientes más brillantes",
-      "Detección temprana de problemas"
+      "Ayuda a prevenir enfermedades de las encías",
+      "Reduce y elimina el mal aliento",
+      "Deja los dientes más limpios y brillantes",
+      "Permite detectar problemas dentales a tiempo",
+      "Contribuye a una mejor salud bucal"
     ],
     steps: [
       {
-        title: "1. Ultrasonido",
-        description: "Vibraciones ultrasónicas desprenden el sarro duro.",
+        title: "1. Limpieza con ultrasonido",
+        description: "Utilizamos un equipo especial que desprende el sarro acumulado de forma segura y eficaz.",
       },
       {
-        title: "2. Pulido",
-        description: "Eliminamos manchas superficiales y alisamos el esmalte.",
+        title: "2. Pulido dental",
+        description: "Pulimos los dientes para eliminar manchas superficiales y dejar la superficie más lisa.",
       },
       {
-        title: "3. Flúor",
-        description: "Aplicación opcional de flúor para fortalecer el esmalte.",
+        title: "3. Aplicación de flúor (opcional)",
+        description: "Aplicamos flúor para ayudar a fortalecer el esmalte y proteger los dientes.",
       }
     ]
   },
   {
-    id: "extraccion",
-    title: "Extracción",
-    shortDescription: "Retiro seguro de dientes dañados o muelas del juicio.",
-    fullDescription: "La extracción se realiza cuando un diente no puede salvarse o para evitar problemas futuros (como con las muelas del juicio).",
-    icon: Trash2,
-    image: damagedToothImage,
-    duration: "20-40 min",
-    painLevel: "Bajo",
-    benefits: [
-      "Elimina la fuente de infección",
-      "Alivia el dolor severo",
-      "Prepara para ortodoncia o implantes"
-    ],
-    steps: [
-      {
-        title: "1. Anestesia",
-        description: "Adormecemos completamente la zona.",
-      },
-      {
-        title: "2. Extracción",
-        description: "Retiramos el diente con cuidado para preservar el hueso.",
-      },
-      {
-        title: "3. Recuperación",
-        description: "Colocamos una gasa y damos instrucciones de cuidado post-operatorio.",
-      }
-    ]
-  }
+  id: "extraccion",
+  title: "Extracción dental",
+  shortDescription: "Retiro seguro de dientes muy dañados o muelas del juicio.",
+  fullDescription: "La extracción dental se realiza cuando un diente está muy dañado, infectado o no puede salvarse con otros tratamientos. También es común en el caso de las muelas del juicio, cuando no tienen espacio para salir correctamente. El procedimiento es controlado, seguro y se realiza con anestesia para evitar dolor.",
+  icon: Trash2,
+  image: extractionImage, 
+  beforeImage: extractionBeforeImage,
+  afterImage: extractionAfterImage,
+  duration: "20 a 40 minutos",
+  painLevel: "Bajo",
+  benefits: [
+    "Elimina la infección y el dolor",
+    "Previene problemas mayores en dientes vecinos",
+    "Mejora la salud bucal",
+    "Permite continuar con otros tratamientos como implantes u ortodoncia"
+  ],
+  steps: [
+    {
+      title: "1. Anestesia",
+      description: "Aplicamos anestesia local para que la zona quede completamente adormecida y el procedimiento sea cómodo.",
+    },
+    {
+      title: "2. Retiro del diente",
+      description: "Extraemos el diente con cuidado, procurando proteger el hueso y los tejidos cercanos.",
+    },
+    {
+      title: "3. Recuperación y cuidados",
+      description: "Colocamos una gasa y te explicamos los cuidados necesarios para una buena cicatrización.",
+    }
+  ]
+}
+
 ];
 
 export { heroImage };
