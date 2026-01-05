@@ -7,26 +7,6 @@ const Nav: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const scrollToSection = (id: string) => {
-    if (location.pathname !== "/") {
-      navigate("/");
-      setTimeout(() => {
-        scrollToElement(id);
-      }, 500);
-    } else {
-      scrollToElement(id);
-    }
-    setOpen(false);
-  };
-
-  const scrollToElement = (id: string) => {
-    const section = document.getElementById(id);
-    if (section) {
-      section.scrollIntoView({ behavior: "smooth" });
-    }
-  };
-
-
 
   return (
     <div className="relative items-center pb-2">

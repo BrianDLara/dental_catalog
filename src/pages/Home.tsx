@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
 import { Search, Sparkles } from "lucide-react";
 import { Input } from "../components/ui/input";
 import { procedures, heroImage } from "../lib/data";
