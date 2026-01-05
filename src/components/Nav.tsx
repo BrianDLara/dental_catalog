@@ -1,11 +1,10 @@
 import React, { useState } from "react";
 import { FaBars, FaTimes } from "react-icons/fa";
-import { Link, useNavigate, useLocation } from "react-router-dom";
+import { Link, useNavigate} from "react-router-dom";
 
 const Nav: React.FC = () => {
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
-  const location = useLocation();
 
 
   return (
