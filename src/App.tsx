@@ -1,13 +1,21 @@
 import { Routes, Route, useLocation } from "react-router-dom";
 import { useEffect } from "react";
 
+//Components
 import Nav from "../src/components/Nav";
 import Footer from "../src/components/Footer";
-import Home from "../src/pages/Home";
 
+//Pages
+import Home from "../src/pages/Home";
 import Procedure from "../src/pages/procedure";
 import PoliticaPrivacidad from "../src/pages/PoliticaPrivacidad";
 import TerminosCondiciones from "../src/pages/TerminosCondiciones";
+import Callback from './pages/Callback';
+import Pay from './pages/Pay';
+import Success from './pages/Success';
+
+//Auth
+import { RequirePaid } from './auth/RequirePaid';
 
 import GTMPageView from "./GTMPageView";
 
@@ -33,9 +41,19 @@ const App = () => {
         <GTMPageView />
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/procedure/:id" element={<Procedure />} />
+          <Route
+            path="/procedure/:id"
+            element={
+              <RequirePaid>
+                <Procedure />
+              </RequirePaid>
+            }
+          />
           <Route path="/politica-privacidad" element={<PoliticaPrivacidad />} />
           <Route path="/terminos-condiciones" element={<TerminosCondiciones />} />
+          <Route path="/callback" element={<Callback />} />
+          <Route path="/pay" element={<Pay />} />
+          <Route path="/success" element={<Success />} />
         </Routes>
       </main>
 
