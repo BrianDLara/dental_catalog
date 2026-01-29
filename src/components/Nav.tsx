@@ -71,9 +71,9 @@ const Nav: React.FC = () => {
           aria-label={open ? "Close menu" : "Open menu"}
         >
           {open ? (
-            <FaTimes size="1.7rem" className="text-foreground" />
+            <FaTimes size="1.7rem" className="text-black" />
           ) : (
-            <FaBars size="1.7rem" className="text-foreground" />
+            <FaBars size="1.7rem" className="text-black" />
           )}
         </button>
       </div>

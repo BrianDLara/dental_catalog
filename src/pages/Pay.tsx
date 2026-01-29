@@ -11,14 +11,15 @@ export default function Pay() {
     setErr(null);
 
     try {
-      const idToken = auth.user?.id_token;
-      if (!idToken) throw new Error("Missing ID token. Please sign in again.");
+      const accessToken = auth.user?.access_token;
+      
+      if (!accessToken) throw new Error("Missing access token. Please sign in again.");
 
-      const res = await fetch(import.meta.env.VITE_API_BASE_URL + "/create-checkout-session", {
+      const res = await fetch(import.meta.env.VITE_API_BASE + "/create-checkout-session", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${idToken}`,
+          Authorization: `Bearer ${accessToken}`,
         },
         body: JSON.stringify({
           // optional: you can send a return path if you want
