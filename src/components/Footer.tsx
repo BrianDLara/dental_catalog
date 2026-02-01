@@ -1,5 +1,7 @@
 import { Link } from "react-router-dom";
 
+import logo from "../images/logo_hero.png"
+
 const Footer = () => {
   return (
     <footer className="bg-secondary border-t border-border/60">
@@ -38,7 +40,7 @@ const Footer = () => {
             "
         >
             <img
-                src="/src/images/logo_hero.png"
+                src={logo}
                 className="h-8 w-8 object-contain transition-transform duration-300 group-hover:scale-105"
                 alt="Senda Digital Marketing Logo"
             />

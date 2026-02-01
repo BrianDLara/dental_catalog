@@ -3,6 +3,9 @@ import { FaBars, FaTimes } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "react-oidc-context";
 
+
+import logo from "../images/logo_2.png";
+
 const COGNITO_DOMAIN =
   "https://us-east-1q3u4ykfue.auth.us-east-1.amazoncognito.com";
 
@@ -51,7 +54,7 @@ const Nav: React.FC = () => {
         <div className="z-10">
           <Link to="/" onClick={() => setOpen(false)}>
             <img
-              src="/src/images/logo_2.png"
+              src={logo}
               alt="Logo"
               className="h-14 xl:h-26 w-auto"
             />
@@ -104,7 +107,7 @@ const Nav: React.FC = () => {
       <div className="absolute left-4 xl:left-10 ml-2 xl:ml-4 z-10 hidden xl:block">
         <Link to="/">
           <img
-            src="/src/images/logo_2.png"
+            src={logo}
             alt="Senda Digital Marketing Logo"
             className="h-14 xl:h-26 w-auto"
           />
