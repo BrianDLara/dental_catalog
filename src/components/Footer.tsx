@@ -38,7 +38,7 @@ const Footer = () => {
             "
         >
             <img
-                src="/images/logo_hero.png"
+                src="/src/images/logo_hero.png"
                 className="h-8 w-8 object-contain transition-transform duration-300 group-hover:scale-105"
                 alt="Senda Digital Marketing Logo"
             />

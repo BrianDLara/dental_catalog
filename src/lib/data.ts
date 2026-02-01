@@ -1,43 +1,43 @@
 import type { LucideIcon } from "lucide-react";
 import { Sparkles, Drill, ShieldCheck, Hammer, Smile, Trash2 } from "lucide-react";
 
-import heroImage from "../../public/images/clinica.png";
+import heroImage from "../images/clinica.png";
 
 //resin images
-import resinImage from "../../public/images/resin.png";
-import resinBeforeImage from "../../public/images/resin_before.png";
-import resinAfterImage from "../../public/images/resin_after.png";
+import resinImage from "../images/resin.png";
+import resinBeforeImage from "../images/resin_before.png";
+import resinAfterImage from "../images/resin_after.png";
 
 //crown images
-import crownImage from "../../public/images/crown.png";
-import crownBeforeImage from "../../public/images/crown_before.png";
-import crownAfterImage from "../../public/images/crown_after.png";
+import crownImage from "../images/crown.png";
+import crownBeforeImage from "../images/crown_before.png";
+import crownAfterImage from "../images/crown_after.png";
 
 
 //root-canal
-import rootImage from "../../public/images/root.png";
-import rootBeforeImage from "../../public/images/root_before.png";
-import rootAfterImage from "../../public/images/root_after.png";
+import rootImage from "../images/root.png";
+import rootBeforeImage from "../images/root_before.png";
+import rootAfterImage from "../images/root_after.png";
 
 //implants
-import implantImage from "../../public/images/implant.png";
-import implantBeforeImage from "../../public/images/implant_before.png";
-import implantAfterImage from "../../public/images/implant_after.png";
+import implantImage from "../images/implant.png";
+import implantBeforeImage from "../images/implant_before.png";
+import implantAfterImage from "../images/implant_after.png";
 
 //braces
-import bracesImage from "../../public/images/braces.png";
-import bracesBeforeImage from "../../public/images/braces_before.png";
-import bracesAfterImage from "../../public/images/braces_after.png";
+import bracesImage from "../images/braces.png";
+import bracesBeforeImage from "../images/braces_before.png";
+import bracesAfterImage from "../images/braces_after.png";
 
 //cleaning
-import cleaningImage from "../../public/images/cleaning.png";
-import cleaningBeforeImage from "../../public/images/cleaning_before.png";
-import cleaningAfterImage from "../../public/images/cleaning_after.png";
+import cleaningImage from "../images/cleaning.png";
+import cleaningBeforeImage from "../images/cleaning_before.png";
+import cleaningAfterImage from "../images/cleaning_after.png";
 
 //cleaning
-import extractionImage from "../../public/images/extraction.png";
-import extractionBeforeImage from "../../public/images/extraction_before.png";
-import extractionAfterImage from "../../public/images/extraction_after.png";
+import extractionImage from "../images/extraction.png";
+import extractionBeforeImage from "../images/extraction_before.png";
+import extractionAfterImage from "../images/extraction_after.png";
 
 
 export interface Step {
