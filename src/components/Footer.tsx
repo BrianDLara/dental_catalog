@@ -85,7 +85,7 @@ const Footer = () => {
         {/* Bottom */}
         <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between text-sm text-muted-foreground/70">
           <span>
-            © 2025{" "}
+            © 2026{" "}
             <a
               href="https://sendadigitalmarketing.com/"
               target="_blank"
@@ -98,7 +98,7 @@ const Footer = () => {
           </span>
 
           <span className="text-muted-foreground/60">
-            Guía Visual Dental • v1.0
+            Guía Visual Dental • v1.1.0
           </span>
         </div>
       </div>
