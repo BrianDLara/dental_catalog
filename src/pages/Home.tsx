@@ -44,8 +44,7 @@ export default function Home() {
               </span>
             </h1>
             <p className="text-lg md:text-xl text-white/80 max-w-2xl mx-auto mb-8">
-              Explicaciones claras, visuales y sencillas sobre tus tratamientos. 
-              Sin términos complicados.
+             Explicaciones visuales, claras y profesionales para comprender tus tratamientos sin complicaciones
             </p>
           </motion.div>
         </div>
