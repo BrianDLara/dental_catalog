@@ -47,9 +47,9 @@ const Nav: React.FC = () => {
   };
 
   return (
-    <div className="relative items-center pb-2">
+    <div className="relative items-center">
       {/* Top: Logo + Burger (mobile) */}
-      <div className="flex items-center justify-between px-4 xl:px-10 pt-4 xl:hidden">
+      <div className="flex items-center justify-between px-4 xl:px-10 pt-1 xl:hidden">
         <div className="z-10">
           <Link to="/" onClick={() => setOpen(false)}>
             <img

@@ -33,7 +33,7 @@ const App = () => {
 
   return (
     <div className="h-dvh bg-white">
-      <header className="py-4 mb-0 xl:mb-4">
+      <header className="pt-3 xl:pt-2 xl:py-4 mb-0 xl:mb-4">
         <Nav />
       </header>
 
