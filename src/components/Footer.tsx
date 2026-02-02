@@ -100,7 +100,7 @@ const Footer = () => {
           </span>
 
           <span className="text-muted-foreground/60">
-            Guía Visual Dental • v1.1.0
+            Guía Visual Dental • v1.2.0
           </span>
         </div>
       </div>

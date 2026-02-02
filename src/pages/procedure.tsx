@@ -441,8 +441,7 @@ export default function ProcedurePage() {
             >
               <DropdownSection title={procedure.urgency.title}>
                 <div className="rounded-2xl border bg-amber-50 border-amber-200 p-5">
-                  {/* Fixed: was text-background (often invisible) */}
-                  <p className="text-foreground font-medium">{procedure.urgency.description}</p>
+                  <p className="text-background font-medium">{procedure.urgency.description}</p>
                 </div>
               </DropdownSection>
             </motion.section>
