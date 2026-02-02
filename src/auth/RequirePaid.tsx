@@ -20,24 +20,64 @@ export function RequirePaid({ children }: { children: ReactNode }) {
         state: { from: loc.pathname + loc.search + loc.hash },
       });
     }
-  }, [auth.isLoading, auth.isAuthenticated, auth.error, auth, loc.pathname, loc.search, loc.hash]);
+  }, [
+    auth.isLoading,
+    auth.isAuthenticated,
+    auth.error,
+    auth,
+    loc.pathname,
+    loc.search,
+    loc.hash,
+  ]);
 
-  if (auth.isLoading) return <div className="p-6">Loading session...</div>;
+  const isResolvingAuth =
+    auth.isLoading ||
+    (!auth.isAuthenticated && !auth.error && redirectingRef.current);
 
-  if (auth.error) {
+  //Full-page placeholder while auth is resolving
+  if (isResolvingAuth) {
     return (
-      <div className="p-6">
-        <p className="font-semibold">Auth error</p>
-        <pre className="mt-2 text-sm opacity-80">{auth.error.message}</pre>
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <div className="flex flex-col items-center gap-4">
+          <div className="h-10 w-10 animate-spin rounded-full border-4 border-primary border-t-transparent" />
+          <p className="text-muted-foreground text-sm">
+            Verificando tu sesión…
+          </p>
+        </div>
       </div>
     );
   }
 
-  if (!auth.isAuthenticated) return <div className="p-6">Redirecting to sign in...</div>;
+  //Auth error
+  if (auth.error) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background p-6">
+        <div className="max-w-md rounded-xl border bg-card p-6">
+          <p className="font-semibold text-foreground">Error de autenticación</p>
+          <pre className="mt-3 text-sm text-muted-foreground whitespace-pre-wrap">
+            {auth.error.message}
+          </pre>
+        </div>
+      </div>
+    );
+  }
 
-  if (loading) return <div className="p-6">Checking access...</div>;
+  //Entitlement still loading
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <p className="text-muted-foreground text-sm">
+          Verificando acceso…
+        </p>
+      </div>
+    );
+  }
 
-  if (!isPaid) return <Navigate to="/pay" replace />;
+  //Logged in but not paid
+  if (!isPaid) {
+    return <Navigate to="/pay" replace />;
+  }
 
+  //Authenticated + paid
   return <>{children}</>;
 }
