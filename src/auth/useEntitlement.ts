@@ -10,5 +10,8 @@ export function useEntitlement() {
     return v === "true" || v === true;
   }, [auth.user]);
 
-  return { loading: auth.isLoading, isPaid };
+  // ✅ Consider entitlement "loading" while auth is still resolving
+  const loading = auth.isLoading || (!auth.isAuthenticated && !auth.error);
+
+  return { loading, isPaid };
 }
