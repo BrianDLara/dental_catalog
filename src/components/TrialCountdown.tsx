@@ -1,19 +1,47 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Clock } from "lucide-react";
-import { formatRemaining, getTrialRemainingMs, isTrialActive } from "../auth/trial";
 
-export default function TrialCountdown() {
-  const [remaining, setRemaining] = useState(() => getTrialRemainingMs());
+function formatRemaining(ms: number): string {
+  const totalSeconds = Math.max(0, Math.floor(ms / 1000));
+  const hours = Math.floor(totalSeconds / 3600);
+  const minutes = Math.floor((totalSeconds % 3600) / 60);
+  const seconds = totalSeconds % 60;
+
+  return [
+    String(hours).padStart(2, "0"),
+    String(minutes).padStart(2, "0"),
+    String(seconds).padStart(2, "0"),
+  ].join(":");
+}
+
+function getRemainingMs(trialEndsAt: string): number {
+  const end = Date.parse(trialEndsAt);
+  if (Number.isNaN(end)) return 0;
+  return Math.max(0, end - Date.now());
+}
+
+export default function TrialCountdown({
+  trialEndsAt,
+}: {
+  trialEndsAt: string;
+}) {
+  const [remaining, setRemaining] = useState(() =>
+    getRemainingMs(trialEndsAt)
+  );
 
   useEffect(() => {
+    setRemaining(getRemainingMs(trialEndsAt));
+
     const interval = window.setInterval(() => {
-      setRemaining(getTrialRemainingMs());
+      setRemaining(getRemainingMs(trialEndsAt));
     }, 1000);
 
     return () => window.clearInterval(interval);
-  }, []);
+  }, [trialEndsAt]);
 
-  if (!isTrialActive()) return null;
+  const active = useMemo(() => remaining > 0, [remaining]);
+
+  if (!active) return null;
 
   return (
     <div className="mb-4 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-amber-900">

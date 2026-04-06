@@ -1,24 +1,50 @@
 import { useAuth } from "react-oidc-context";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Button } from "../components/ui/button";
 import { Check, Lock, Clock } from "lucide-react";
-import { formatRemaining, getTrialRemainingMs, isTrialActive } from "../auth/trial";
+import { useEntitlement } from "../auth/useEntitlement";
+
+function formatRemaining(ms: number): string {
+  const totalSeconds = Math.max(0, Math.floor(ms / 1000));
+  const hours = Math.floor(totalSeconds / 3600);
+  const minutes = Math.floor((totalSeconds % 3600) / 60);
+  const seconds = totalSeconds % 60;
+
+  return [
+    String(hours).padStart(2, "0"),
+    String(minutes).padStart(2, "0"),
+    String(seconds).padStart(2, "0"),
+  ].join(":");
+}
+
+function getRemainingMs(trialEndsAt: string | null): number {
+  if (!trialEndsAt) return 0;
+  const end = Date.parse(trialEndsAt);
+  if (Number.isNaN(end)) return 0;
+  return Math.max(0, end - Date.now());
+}
 
 export default function Pay() {
   const auth = useAuth();
+  const { loading: entitlementLoading, isPaid, trialActive, trialEndsAt } = useEntitlement();
+
   const [loading, setLoading] = useState(false);
   const [err, setErr] = useState<string | null>(null);
-  const [remaining, setRemaining] = useState(() => getTrialRemainingMs());
+  const [remaining, setRemaining] = useState(() => getRemainingMs(trialEndsAt));
 
   useEffect(() => {
+    setRemaining(getRemainingMs(trialEndsAt));
+
+    if (!trialEndsAt) return;
+
     const interval = window.setInterval(() => {
-      setRemaining(getTrialRemainingMs());
+      setRemaining(getRemainingMs(trialEndsAt));
     }, 1000);
 
     return () => window.clearInterval(interval);
-  }, []);
+  }, [trialEndsAt]);
 
-  const trialActive = isTrialActive();
+  const formattedRemaining = useMemo(() => formatRemaining(remaining), [remaining]);
 
   const handleCheckout = async () => {
     if (loading) return;
@@ -27,16 +53,21 @@ export default function Pay() {
 
     try {
       const accessToken = auth.user?.access_token;
-      if (!accessToken) throw new Error("Tu sesión expiró. Inicia sesión de nuevo.");
+      if (!accessToken) {
+        throw new Error("Tu sesión expiró. Inicia sesión de nuevo.");
+      }
 
-      const res = await fetch(import.meta.env.VITE_API_BASE + "/create-checkout-session", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${accessToken}`,
-        },
-        body: JSON.stringify({}),
-      });
+      const res = await fetch(
+        `${import.meta.env.VITE_API_BASE}/create-checkout-session`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${accessToken}`,
+          },
+          body: JSON.stringify({}),
+        }
+      );
 
       if (!res.ok) {
         const text = await res.text();
@@ -51,16 +82,37 @@ export default function Pay() {
     }
   };
 
+  if (entitlementLoading) {
+    return (
+      <main className="min-h-screen bg-background text-foreground">
+        <div className="mx-auto w-full max-w-xl px-4 pt-10 pb-28 sm:pb-12 sm:pt-14">
+          <div className="rounded-2xl border border-border bg-card p-5 sm:p-7 shadow-sm">
+            <p className="text-sm text-muted-foreground">Verificando acceso…</p>
+          </div>
+        </div>
+      </main>
+    );
+  }
+
   return (
     <main className="min-h-screen bg-background text-foreground">
       <div className="mx-auto w-full max-w-xl px-4 pt-10 pb-28 sm:pb-12 sm:pt-14">
         <div className="rounded-2xl border border-border bg-card p-5 sm:p-7 shadow-sm">
-          {trialActive ? (
+          {isPaid ? (
+            <div className="mb-5 rounded-xl border border-emerald-200 bg-emerald-50 p-4 text-emerald-900">
+              <p className="text-sm font-semibold">
+                Ya cuentas con acceso de por vida.
+              </p>
+              <p className="mt-1 text-xs text-emerald-800/80">
+                Tu compra ya fue registrada. Puedes regresar al catálogo.
+              </p>
+            </div>
+          ) : trialActive && trialEndsAt ? (
             <div className="mb-5 rounded-xl border border-amber-200 bg-amber-50 p-4 text-amber-900">
               <div className="flex items-center gap-2">
                 <Clock className="h-4 w-4" />
                 <p className="text-sm font-semibold">
-                  Tu prueba sigue activa: {formatRemaining(remaining)}
+                  Tu prueba sigue activa: {formattedRemaining}
                 </p>
               </div>
               <p className="mt-1 text-xs text-amber-800/80">
@@ -132,36 +184,40 @@ export default function Pay() {
             </div>
           )}
 
-          <div className="mt-6 hidden sm:block">
+          {!isPaid && (
+            <div className="mt-6 hidden sm:block">
+              <Button
+                onClick={handleCheckout}
+                disabled={loading}
+                className="w-full h-11 text-base"
+              >
+                {loading ? "Abriendo Stripe..." : "Pagar con Stripe"}
+              </Button>
+
+              <p className="mt-3 text-xs text-muted-foreground">
+                Serás redirigido a Stripe para completar el pago de forma segura.
+              </p>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {!isPaid && (
+        <div className="sm:hidden fixed inset-x-0 bottom-0 z-50 border-t bg-background/90 backdrop-blur supports-[backdrop-filter]:bg-background/70">
+          <div className="mx-auto max-w-xl px-4 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-3">
             <Button
               onClick={handleCheckout}
               disabled={loading}
-              className="w-full h-11 text-base"
+              className="w-full h-12 text-base"
             >
-              {loading ? "Abriendo Stripe..." : "Pagar con Stripe"}
+              {loading ? "Abriendo Stripe..." : "Pagar $20 USD con Stripe"}
             </Button>
-
-            <p className="mt-3 text-xs text-muted-foreground">
-              Serás redirigido a Stripe para completar el pago de forma segura.
+            <p className="mt-2 text-[11px] leading-snug text-muted-foreground">
+              Serás redirigido a Stripe para completar el pago.
             </p>
           </div>
         </div>
-      </div>
-
-      <div className="sm:hidden fixed inset-x-0 bottom-0 z-50 border-t bg-background/90 backdrop-blur supports-[backdrop-filter]:bg-background/70">
-        <div className="mx-auto max-w-xl px-4 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-3">
-          <Button
-            onClick={handleCheckout}
-            disabled={loading}
-            className="w-full h-12 text-base"
-          >
-            {loading ? "Abriendo Stripe..." : "Pagar $20 USD con Stripe"}
-          </Button>
-          <p className="mt-2 text-[11px] leading-snug text-muted-foreground">
-            Serás redirigido a Stripe para completar el pago.
-          </p>
-        </div>
-      </div>
+      )}
     </main>
   );
 }

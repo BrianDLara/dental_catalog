@@ -1,45 +1,54 @@
 import { useEffect, useState } from "react";
-import { useAuth } from "react-oidc-context";
 import { Clock } from "lucide-react";
-import {
-  formatRemaining,
-  getTrialRemainingMs,
-  isTrialActive,
-} from "../auth/trial";
+import { useEntitlement } from "../auth/useEntitlement";
+
+function formatRemaining(ms: number): string {
+  const totalSeconds = Math.max(0, Math.floor(ms / 1000));
+  const hours = Math.floor(totalSeconds / 3600);
+  const minutes = Math.floor((totalSeconds % 3600) / 60);
+  const seconds = totalSeconds % 60;
+
+  return [
+    String(hours).padStart(2, "0"),
+    String(minutes).padStart(2, "0"),
+    String(seconds).padStart(2, "0"),
+  ].join(":");
+}
+
+function getRemainingMs(trialEndsAt: string): number {
+  const end = Date.parse(trialEndsAt);
+  if (Number.isNaN(end)) return 0;
+  return Math.max(0, end - Date.now());
+}
 
 export default function GlobalTrialBanner() {
-  const auth = useAuth();
-  const [remaining, setRemaining] = useState(() =>
-    getTrialRemainingMs()
-  );
+  const { loading, isPaid, trialActive, trialEndsAt } = useEntitlement();
+  const [remaining, setRemaining] = useState(0);
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      setRemaining(getTrialRemainingMs());
+    if (!trialEndsAt) {
+      setRemaining(0);
+      return;
+    }
+
+    setRemaining(getRemainingMs(trialEndsAt));
+
+    const interval = window.setInterval(() => {
+      setRemaining(getRemainingMs(trialEndsAt));
     }, 1000);
 
-    return () => clearInterval(interval);
-  }, []);
+    return () => window.clearInterval(interval);
+  }, [trialEndsAt]);
 
-  // Only show if logged in, NOT paid, and trial active
-  const profile = auth.user?.profile as Record<string, any> | undefined;
-  const paid =
-    profile?.["custom:paid"] === "true" ||
-    profile?.["custom:paid"] === true ||
-    profile?.paid === "true" ||
-    profile?.paid === true;
-
-  if (!auth.isAuthenticated || paid || !isTrialActive()) return null;
+  if (loading || isPaid || !trialActive || !trialEndsAt) return null;
 
   return (
     <div className="w-full bg-amber-500 text-black text-sm">
-      <div className="max-w-7xl mx-auto px-4 py-2 flex items-center justify-center gap-2">
+      <div className="mx-auto flex max-w-7xl items-center justify-center gap-2 px-4 py-2">
         <Clock className="h-4 w-4" />
         <span className="font-medium">
           Tu prueba gratis termina en{" "}
-          <span className="font-bold">
-            {formatRemaining(remaining)}
-          </span>
+          <span className="font-bold">{formatRemaining(remaining)}</span>
         </span>
       </div>
     </div>

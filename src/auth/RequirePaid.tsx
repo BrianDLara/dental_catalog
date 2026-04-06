@@ -3,13 +3,12 @@ import { useAuth } from "react-oidc-context";
 import { useEntitlement } from "./useEntitlement";
 import { useEffect, useRef } from "react";
 import type { ReactNode } from "react";
-import { isTrialActive, startTrialIfMissing } from "./trial";
 import TrialCountdown from "../components/TrialCountdown";
 
 export function RequirePaid({ children }: { children: ReactNode }) {
   const auth = useAuth();
   const loc = useLocation();
-  const { loading, isPaid } = useEntitlement();
+  const { loading, isPaid, trialActive, trialEndsAt } = useEntitlement();
 
   const redirectingRef = useRef(false);
 
@@ -31,12 +30,6 @@ export function RequirePaid({ children }: { children: ReactNode }) {
     loc.search,
     loc.hash,
   ]);
-
-  useEffect(() => {
-    if (auth.isAuthenticated) {
-      startTrialIfMissing();
-    }
-  }, [auth.isAuthenticated]);
 
   const isResolvingAuth =
     auth.isLoading ||
@@ -78,7 +71,6 @@ export function RequirePaid({ children }: { children: ReactNode }) {
     );
   }
 
-  const trialActive = isTrialActive();
   const canAccess = isPaid || trialActive;
 
   if (!canAccess) {
@@ -87,9 +79,9 @@ export function RequirePaid({ children }: { children: ReactNode }) {
 
   return (
     <>
-      {!isPaid && trialActive && (
+      {!isPaid && trialActive && trialEndsAt && (
         <div className="container mx-auto px-4 pt-4">
-          <TrialCountdown />
+          <TrialCountdown trialEndsAt={trialEndsAt} />
         </div>
       )}
       {children}
