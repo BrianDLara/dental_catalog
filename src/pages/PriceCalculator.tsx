@@ -11,7 +11,6 @@ import {
   Plus,
   Minus,
   PencilLine,
-  Download,
   FileText,
   Receipt,
   Printer,
