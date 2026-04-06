@@ -3,6 +3,8 @@ import { useAuth } from "react-oidc-context";
 import { useEntitlement } from "./useEntitlement";
 import { useEffect, useRef } from "react";
 import type { ReactNode } from "react";
+import { isTrialActive, startTrialIfMissing } from "./trial";
+import TrialCountdown from "../components/TrialCountdown";
 
 export function RequirePaid({ children }: { children: ReactNode }) {
   const auth = useAuth();
@@ -30,11 +32,16 @@ export function RequirePaid({ children }: { children: ReactNode }) {
     loc.hash,
   ]);
 
+  useEffect(() => {
+    if (auth.isAuthenticated) {
+      startTrialIfMissing();
+    }
+  }, [auth.isAuthenticated]);
+
   const isResolvingAuth =
     auth.isLoading ||
     (!auth.isAuthenticated && !auth.error && redirectingRef.current);
 
-  // Full-page placeholder while auth is resolving
   if (isResolvingAuth) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
@@ -48,7 +55,6 @@ export function RequirePaid({ children }: { children: ReactNode }) {
     );
   }
 
-  // Auth error
   if (auth.error) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background p-6">
@@ -62,7 +68,6 @@ export function RequirePaid({ children }: { children: ReactNode }) {
     );
   }
 
-  // Entitlement still loading
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
@@ -73,11 +78,21 @@ export function RequirePaid({ children }: { children: ReactNode }) {
     );
   }
 
-  // Logged in but not paid
-  if (!isPaid) {
+  const trialActive = isTrialActive();
+  const canAccess = isPaid || trialActive;
+
+  if (!canAccess) {
     return <Navigate to="/pay" replace />;
   }
 
-  // Authenticated + paid
-  return <>{children}</>;
+  return (
+    <>
+      {!isPaid && trialActive && (
+        <div className="container mx-auto px-4 pt-4">
+          <TrialCountdown />
+        </div>
+      )}
+      {children}
+    </>
+  );
 }

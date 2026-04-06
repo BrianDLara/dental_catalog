@@ -1,21 +1,24 @@
 import { Routes, Route, useLocation } from "react-router-dom";
 import { useEffect } from "react";
 
-//Components
+// Components
 import Nav from "../src/components/Nav";
 import Footer from "../src/components/Footer";
+import GlobalTrialBanner from "./components/GlobalTrialBanner";
 
-//Pages
+// Pages
 import Home from "../src/pages/Home";
 import Procedure from "../src/pages/procedure";
 import PoliticaPrivacidad from "../src/pages/PoliticaPrivacidad";
 import TerminosCondiciones from "../src/pages/TerminosCondiciones";
-import Callback from './pages/Callback';
-import Pay from './pages/Pay';
-import Success from './pages/Success';
+import Callback from "./pages/Callback";
+import Pay from "./pages/Pay";
+import PriceCalculator from './pages/PriceCalculator';
+import Success from "./pages/Success";
+import Settings from "./pages/Setting"; // ✅ NEW
 
-//Auth
-import { RequirePaid } from './auth/RequirePaid';
+// Auth
+import { RequirePaid } from "./auth/RequirePaid";
 
 import GTMPageView from "./GTMPageView";
 
@@ -26,21 +29,25 @@ const App = () => {
     if (location.hash) {
       const sectionId = location.hash.replace("#", "");
       setTimeout(() => {
-        document.getElementById(sectionId)?.scrollIntoView({ behavior: "smooth" });
+        document
+          .getElementById(sectionId)
+          ?.scrollIntoView({ behavior: "smooth" });
       }, 100);
     }
   }, [location]);
 
   return (
-    <div className="h-dvh bg-white">
-      <header className="pt-3 xl:pt-2 xl:py-4 mb-0 xl:mb-4">
-        <Nav />
-      </header>
+  <div className="h-dvh bg-white">
+    <GlobalTrialBanner />
+    <header className="pt-3 xl:pt-2">
+      <Nav />
+    </header>
 
-      <main className="bg-white mt-0 xl:mt-4">
+      <main className="bg-white pt-0 pt-3">
         <GTMPageView />
         <Routes>
           <Route path="/" element={<Home />} />
+
           <Route
             path="/procedure/:id"
             element={
@@ -49,6 +56,26 @@ const App = () => {
               </RequirePaid>
             }
           />
+
+          {/* ✅ NEW: Settings route (protected) */}
+          <Route
+            path="/settings"
+            element={
+              <RequirePaid>
+                <Settings />
+              </RequirePaid>
+            }
+          />
+
+          <Route
+            path="/precios"
+            element={
+              <RequirePaid>
+                <PriceCalculator />
+              </RequirePaid>
+            }
+          />
+
           <Route path="/politica-privacidad" element={<PoliticaPrivacidad />} />
           <Route path="/terminos-condiciones" element={<TerminosCondiciones />} />
           <Route path="/callback" element={<Callback />} />

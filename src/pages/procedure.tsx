@@ -1,4 +1,10 @@
-// src/pages/ProcedurePage.tsx
+// This page renders a single “procedure” detail view.
+// - It reads the procedure id from the URL (react-router)
+// - Looks up the matching procedure in your local data
+// - Shows a hero header, quick facts, optional before/after slider,
+//   and then a stack of collapsible sections (details/summary UI)
+
+import React from "react";
 import { useParams, Link } from "react-router-dom";
 import {
   ArrowLeft,
@@ -13,14 +19,21 @@ import {
   Shield,
   ChevronDown,
 } from "lucide-react";
+import { motion } from "framer-motion";
+
 import { Button } from "../components/ui/button";
 import { StepSequence } from "../components/step-sequence";
 import { BeforeAfter } from "../components/before-after";
-import { motion } from "framer-motion";
 
 import { procedures } from "../lib/data";
 import type { Procedure as ProcedureType } from "../lib/data";
 
+/**
+ * SectionTitle
+ * ------------
+ * A consistent “H2” style used before major sections (ex: Before/After).
+ * Includes a small colored bar to the left for visual hierarchy.
+ */
 function SectionTitle({ children }: { children: React.ReactNode }) {
   return (
     <h2 className="text-foreground text-2xl font-bold mb-6 flex items-center gap-2">
@@ -30,6 +43,17 @@ function SectionTitle({ children }: { children: React.ReactNode }) {
   );
 }
 
+/**
+ * DropdownSection
+ * ---------------
+ * A reusable collapsible section based on <details>/<summary>.
+ * - defaultOpen controls whether it starts opened.
+ * - uses "group-open" Tailwind classes to animate the chevron rotation.
+ *
+ * Why <details>?:
+ * - Native accessibility and keyboard support out of the box.
+ * - Simple to style and works well on mobile.
+ */
 function DropdownSection({
   title,
   defaultOpen = false,
@@ -49,14 +73,29 @@ function DropdownSection({
           <span className="w-1 h-6 bg-primary rounded-full" />
           <h3 className="text-foreground text-lg font-bold">{title}</h3>
         </div>
+
+        {/* This rotates when details is open (group-open) */}
         <ChevronDown className="h-5 w-5 text-muted-foreground transition-transform group-open:rotate-180" />
       </summary>
 
+      {/* body */}
       <div className="px-5 pb-5 pt-4 border-t bg-background/40">{children}</div>
     </details>
   );
 }
 
+/**
+ * BulletCard
+ * ----------
+ * A reusable “card of bullets” component.
+ * - tone controls styling (default / warn / success)
+ * - items are displayed in a 2-column grid (on sm+ screens)
+ *
+ * You use this for:
+ * - “Resultados esperados”
+ * - “Recomendado para”
+ * - “Puede no ser ideal si…”
+ */
 function BulletCard({
   icon,
   title,
@@ -68,6 +107,7 @@ function BulletCard({
   items: string[];
   tone?: "default" | "warn" | "success";
 }) {
+  // border/background styling depends on tone
   const badge =
     tone === "warn"
       ? "bg-card border-red-400"
@@ -75,6 +115,7 @@ function BulletCard({
       ? "bg-card border-emerald-200"
       : "bg-card border";
 
+  // small dot styling depends on tone
   const dot =
     tone === "warn"
       ? "text-amber-700"
@@ -84,14 +125,19 @@ function BulletCard({
 
   return (
     <div className={`rounded-2xl border p-5 shadow-sm ${badge}`}>
+      {/* card header */}
       <div className="flex items-center gap-2 mb-4">
         <div className="text-primary">{icon}</div>
         <h3 className="text-lg font-bold text-foreground">{title}</h3>
       </div>
 
+      {/* bullet grid */}
       <div className="grid sm:grid-cols-2 gap-3">
         {items.map((t, i) => (
-          <div key={i} className="flex items-start gap-3 p-3 rounded-xl border bg-background/60">
+          <div
+            key={i}
+            className="flex items-start gap-3 p-3 rounded-xl border bg-background/60"
+          >
             <div className={`mt-1 p-1 rounded-full ${dot}`}>
               <Check className="h-3 w-3" />
             </div>
@@ -103,15 +149,36 @@ function BulletCard({
   );
 }
 
+/**
+ * ProcedurePage (default export)
+ * ------------------------------
+ * Main page component for /procedure/:id
+ *
+ * Flow:
+ * 1) Read the id from the route params
+ * 2) Find matching procedure object in your data array
+ * 3) If not found, show a “not found” page
+ * 4) If found, render the full procedure page
+ */
 export default function ProcedurePage() {
+  // read procedure id from route: /procedure/:id
   const { id } = useParams<{ id: string }>();
+
+  // find matching procedure in local dataset
+  // NOTE: if ids are not unique, this would return first match.
   const procedure: ProcedureType | undefined = procedures.find((p) => p.id === id);
 
+  /**
+   * Not found state
+   * ---------------
+   * If the user navigates to an unknown id, we render a friendly message
+   * and provide a way back to the home list.
+   */
   if (!procedure) {
     return (
       <div className="min-h-screen bg-background p-6">
         <Link to="/">
-          <Button variant="secondary" size="sm" className="gap-2">
+          <Button variant="secondary" size="sm" className="gap-2 cursor-pointer">
             <ArrowLeft className="h-4 w-4" />
             Volver
           </Button>
@@ -128,28 +195,45 @@ export default function ProcedurePage() {
     );
   }
 
+  /**
+   * sectionsEnabled / show()
+   * ------------------------
+   * Procedures can enable/disable certain page sections.
+   * show(key, fallback) returns:
+   * - procedure.sectionsEnabled[key] if defined
+   * - otherwise the fallback (defaults to true)
+   *
+   * This lets you quickly hide sections per-procedure without changing UI code.
+   */
   const enabled = procedure.sectionsEnabled ?? {};
   const show = (key: keyof NonNullable<ProcedureType["sectionsEnabled"]>, fallback = true) =>
     enabled[key] ?? fallback;
 
   return (
     <div className="min-h-screen bg-background pb-20">
-      {/* Header Image */}
+      {/* =========================================================
+         HERO HEADER
+         =========================================================
+         - Shows the procedure image as a large top banner
+         - Adds a gradient overlay so text is readable on any photo
+         - Includes a back button and title overlay
+      */}
       <div className="relative h-[40vh] w-full overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-b from-transparent to-background z-10" />
+
         <img
           src={procedure.image}
           alt={procedure.title}
           className="w-full h-full object-cover object-[50%_45%]"
         />
 
-        {/* Navigation */}
+        {/* Back navigation button (top-left, over hero image) */}
         <div className="absolute top-4 left-4 z-20">
           <Link to="/">
             <Button
               variant="secondary"
               size="sm"
-              className="gap-2 shadow-lg backdrop-blur-md bg-background/80 hover:bg-background"
+              className="gap-2 shadow-lg backdrop-blur-md bg-background/80 hover:bg-background cursor-pointer"
             >
               <ArrowLeft className="h-4 w-4" />
               Volver
@@ -157,18 +241,23 @@ export default function ProcedurePage() {
           </Link>
         </div>
 
-        {/* Title Overlay */}
+        {/* Title overlay on the bottom of hero */}
         <div className="absolute bottom-0 left-0 w-full p-6 z-20">
           <div className="container mx-auto max-w-3xl">
+            {/* Framer Motion used only for a subtle entrance animation */}
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
+              {/* Small pill badges (treatment, duration, longevity) */}
               <div className="flex flex-wrap items-center gap-2 mb-2">
                 <span className="px-3 py-1 rounded-full bg-primary text-primary-foreground text-xs font-bold uppercase tracking-wider">
                   Tratamiento
                 </span>
+
                 <span className="flex items-center gap-1 px-3 py-1 rounded-full bg-background/80 backdrop-blur text-foreground text-xs font-medium border">
                   <Clock className="h-3 w-3" />
                   {procedure.duration}
                 </span>
+
+                {/* Longevity badge is optional and also gated by show("longevity") */}
                 {procedure.longevity && show("longevity") && (
                   <span className="flex items-center gap-1 px-3 py-1 rounded-full bg-background/80 backdrop-blur text-foreground text-xs font-medium border">
                     <Shield className="h-3 w-3" />
@@ -189,17 +278,28 @@ export default function ProcedurePage() {
         </div>
       </div>
 
-      <div className="container mx-auto max-w-3xl px-4 mt-8">
-        {/* Intro + Quick Facts */}
+      {/* =========================================================
+         MAIN CONTENT WRAPPER
+         ========================================================= */}
+      <div className="container mx-auto max-w-3xl lg:max-w-5xl px-4 mt-8">
+        {/* =========================================================
+           INTRO + QUICK FACTS
+           =========================================================
+           - procedure.fullDescription is the “long” description
+           - Quick facts show pain level, duration, anesthesia, recovery time
+        */}
         <motion.section
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.2 }}
           className="mb-12"
         >
-          <p className="text-xl text-muted-foreground leading-relaxed">{procedure.fullDescription}</p>
+          <p className="text-xl text-muted-foreground leading-relaxed">
+            {procedure.fullDescription}
+          </p>
 
           <div className="grid sm:grid-cols-2 gap-4 mt-8">
+            {/* Pain */}
             <div className="bg-secondary/90 p-4 rounded-xl border border-secondary">
               <div className="flex items-center gap-2 mb-2 text-primary font-bold">
                 <Activity className="h-5 w-5" />
@@ -210,16 +310,19 @@ export default function ProcedurePage() {
               </p>
             </div>
 
+            {/* Duration */}
             <div className="bg-secondary/90 p-4 rounded-xl border border-secondary">
               <div className="flex items-center gap-2 mb-2 text-primary font-bold">
                 <Clock className="h-5 w-5" />
                 Tiempo
               </div>
               <p className="text-muted-foreground">
-                Duración: <span className="font-semibold text-foreground">{procedure.duration}</span>
+                Duración:{" "}
+                <span className="font-semibold text-foreground">{procedure.duration}</span>
               </p>
             </div>
 
+            {/* Anesthesia (optional) */}
             {procedure.anesthesia && show("anesthesia") && (
               <div className="bg-secondary/90 p-4 rounded-xl border border-secondary sm:col-span-1">
                 <div className="flex items-center gap-2 mb-2 text-primary font-bold">
@@ -232,6 +335,7 @@ export default function ProcedurePage() {
               </div>
             )}
 
+            {/* Recovery time (optional) */}
             {procedure.recoveryTime && show("recoveryTime") && (
               <div className="bg-secondary/90 p-4 rounded-xl border border-secondary sm:col-span-1">
                 <div className="flex items-center gap-2 mb-2 text-primary font-bold">
@@ -246,7 +350,12 @@ export default function ProcedurePage() {
           </div>
         </motion.section>
 
-        {/* Before / After (NOT dropdown) */}
+        {/* =========================================================
+           BEFORE / AFTER (optional)
+           =========================================================
+           - Only shown if both images exist AND show("beforeAfter") is true
+           - Wrapped in a motion.section for a scroll-into-view entrance
+        */}
         {procedure.beforeImage && procedure.afterImage && show("beforeAfter") && (
           <motion.section
             initial={{ opacity: 0, y: 20 }}
@@ -255,15 +364,21 @@ export default function ProcedurePage() {
             className="mb-10"
           >
             <SectionTitle>Antes y Después</SectionTitle>
+
             <div className="bg-secondary p-6 rounded-2xl border shadow-sm">
-              <BeforeAfter beforeImage={procedure.beforeImage} afterImage={procedure.afterImage} />
+              <BeforeAfter
+                beforeImage={procedure.beforeImage}
+                afterImage={procedure.afterImage}
+              />
             </div>
           </motion.section>
         )}
 
-        {/* Dropdown stack */}
+        {/* =========================================================
+           DROPDOWN STACK (collapsible sections)
+           ========================================================= */}
         <div className="space-y-4">
-          {/* Benefits */}
+          {/* BENEFITS */}
           {show("benefits") && (
             <motion.section
               initial={{ opacity: 0, y: 14 }}
@@ -287,7 +402,8 @@ export default function ProcedurePage() {
               </DropdownSection>
             </motion.section>
           )}
-           {/* Steps */}
+
+          {/* STEPS */}
           {show("steps") && (
             <motion.section
               initial={{ opacity: 0, y: 14 }}
@@ -299,8 +415,8 @@ export default function ProcedurePage() {
               </DropdownSection>
             </motion.section>
           )}
-          
-          {/* Qué puedes esperar */}
+
+          {/* WHAT TO EXPECT (Results / Recommended / Not recommended) */}
           {((procedure.results?.length && show("results")) ||
             (procedure.recommendedFor?.length && show("recommendedFor")) ||
             (procedure.notRecommendedFor?.length && show("notRecommendedFor"))) && (
@@ -311,6 +427,7 @@ export default function ProcedurePage() {
             >
               <DropdownSection title="Qué puedes esperar">
                 <div className="space-y-4">
+                  {/* Results expected */}
                   {procedure.results?.length && show("results") && (
                     <div className="!text-black">
                       <BulletCard
@@ -323,6 +440,7 @@ export default function ProcedurePage() {
                   )}
 
                   <div className="grid sm:grid-cols-2 gap-4">
+                    {/* Recommended for */}
                     {procedure.recommendedFor?.length && show("recommendedFor") && (
                       <BulletCard
                         icon={<Check className="h-5 w-5" />}
@@ -332,6 +450,7 @@ export default function ProcedurePage() {
                       />
                     )}
 
+                    {/* Not recommended for */}
                     {procedure.notRecommendedFor?.length && show("notRecommendedFor") && (
                       <BulletCard
                         icon={<ShieldAlert className="h-5 w-5" />}
@@ -346,7 +465,7 @@ export default function ProcedurePage() {
             </motion.section>
           )}
 
-          {/* Consideraciones */}
+          {/* CONSIDERATIONS */}
           {procedure.considerations?.length && show("considerations") && (
             <motion.section
               initial={{ opacity: 0, y: 14 }}
@@ -368,7 +487,7 @@ export default function ProcedurePage() {
             </motion.section>
           )}
 
-          {/* Alternativas */}
+          {/* ALTERNATIVES */}
           {procedure.alternatives?.length && show("alternatives") && (
             <motion.section
               initial={{ opacity: 0, y: 14 }}
@@ -388,7 +507,7 @@ export default function ProcedurePage() {
             </motion.section>
           )}
 
-          {/* After care */}
+          {/* AFTER CARE */}
           {procedure.afterCare?.length && show("afterCare") && (
             <motion.section
               initial={{ opacity: 0, y: 14 }}
@@ -398,7 +517,10 @@ export default function ProcedurePage() {
               <DropdownSection title="Cuidados después del tratamiento">
                 <div className="grid sm:grid-cols-2 gap-3">
                   {procedure.afterCare.map((t, i) => (
-                    <div key={i} className="flex items-start gap-3 p-3 rounded-xl border bg-background/60">
+                    <div
+                      key={i}
+                      className="flex items-start gap-3 p-3 rounded-xl border bg-background/60"
+                    >
                       <div className="mt-1 p-1 rounded-full bg-secondary text-foreground">
                         <Check className="h-3 w-3" />
                       </div>
@@ -410,7 +532,7 @@ export default function ProcedurePage() {
             </motion.section>
           )}
 
-          {/* Technology */}
+          {/* TECHNOLOGY */}
           {procedure.technology?.length && show("technology") && (
             <motion.section
               initial={{ opacity: 0, y: 14 }}
@@ -432,7 +554,7 @@ export default function ProcedurePage() {
             </motion.section>
           )}
 
-          {/* Urgency */}
+          {/* URGENCY */}
           {procedure.urgency && show("urgency") && (
             <motion.section
               initial={{ opacity: 0, y: 14 }}
@@ -462,6 +584,7 @@ export default function ProcedurePage() {
                         <div className="mt-1 p-1 rounded-full bg-secondary text-foreground">
                           <HelpCircle className="h-4 w-4" />
                         </div>
+
                         <div>
                           <h3 className="font-bold text-foreground">{f.question}</h3>
                           <p className="text-muted-foreground mt-1">{f.answer}</p>

@@ -1,12 +1,24 @@
 import { useAuth } from "react-oidc-context";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "../components/ui/button";
-import { Check, Lock } from "lucide-react";
+import { Check, Lock, Clock } from "lucide-react";
+import { formatRemaining, getTrialRemainingMs, isTrialActive } from "../auth/trial";
 
 export default function Pay() {
   const auth = useAuth();
   const [loading, setLoading] = useState(false);
   const [err, setErr] = useState<string | null>(null);
+  const [remaining, setRemaining] = useState(() => getTrialRemainingMs());
+
+  useEffect(() => {
+    const interval = window.setInterval(() => {
+      setRemaining(getTrialRemainingMs());
+    }, 1000);
+
+    return () => window.clearInterval(interval);
+  }, []);
+
+  const trialActive = isTrialActive();
 
   const handleCheckout = async () => {
     if (loading) return;
@@ -41,10 +53,31 @@ export default function Pay() {
 
   return (
     <main className="min-h-screen bg-background text-foreground">
-      {/* Mobile-safe padding (notch) + comfortable vertical rhythm */}
       <div className="mx-auto w-full max-w-xl px-4 pt-10 pb-28 sm:pb-12 sm:pt-14">
         <div className="rounded-2xl border border-border bg-card p-5 sm:p-7 shadow-sm">
-          {/* Header */}
+          {trialActive ? (
+            <div className="mb-5 rounded-xl border border-amber-200 bg-amber-50 p-4 text-amber-900">
+              <div className="flex items-center gap-2">
+                <Clock className="h-4 w-4" />
+                <p className="text-sm font-semibold">
+                  Tu prueba sigue activa: {formatRemaining(remaining)}
+                </p>
+              </div>
+              <p className="mt-1 text-xs text-amber-800/80">
+                Puedes comprar el acceso de por vida desde ahora si lo prefieres.
+              </p>
+            </div>
+          ) : (
+            <div className="mb-5 rounded-xl border border-rose-200 bg-rose-50 p-4 text-rose-900">
+              <p className="text-sm font-semibold">
+                Tu prueba gratuita de 24 horas ha terminado.
+              </p>
+              <p className="mt-1 text-xs text-rose-800/80">
+                Desbloquea el catálogo completo con un pago único.
+              </p>
+            </div>
+          )}
+
           <div className="flex items-start gap-3">
             <div className="mt-0.5 rounded-xl border bg-background/60 p-2">
               <Lock className="h-5 w-5 text-primary" />
@@ -59,7 +92,6 @@ export default function Pay() {
             </div>
           </div>
 
-          {/* Offer Card */}
           <div className="mt-6 rounded-2xl border border-border/60 bg-muted/30 p-4 sm:p-5">
             <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
               <div className="min-w-0">
@@ -71,14 +103,12 @@ export default function Pay() {
                 </p>
               </div>
 
-              {/* Price pill */}
               <div className="self-start sm:self-auto rounded-xl border bg-background px-3 py-2">
                 <p className="text-sm text-muted-foreground leading-none">Precio</p>
                 <p className="text-lg font-bold leading-tight">$20 USD</p>
               </div>
             </div>
 
-            {/* Value bullets (mobile-friendly) */}
             <div className="mt-4 grid gap-2 sm:grid-cols-2">
               {[
                 "Acceso inmediato",
@@ -96,14 +126,12 @@ export default function Pay() {
             </div>
           </div>
 
-          {/* Error */}
           {err && (
             <div className="mt-4 rounded-xl border border-destructive/40 bg-destructive/10 p-4 text-sm">
               {err}
             </div>
           )}
 
-          {/* Desktop CTA (inside card) */}
           <div className="mt-6 hidden sm:block">
             <Button
               onClick={handleCheckout}
@@ -120,7 +148,6 @@ export default function Pay() {
         </div>
       </div>
 
-      {/* Mobile sticky CTA (thumb-friendly) */}
       <div className="sm:hidden fixed inset-x-0 bottom-0 z-50 border-t bg-background/90 backdrop-blur supports-[backdrop-filter]:bg-background/70">
         <div className="mx-auto max-w-xl px-4 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-3">
           <Button

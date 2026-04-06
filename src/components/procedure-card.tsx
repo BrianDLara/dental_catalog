@@ -60,7 +60,7 @@ export function ProcedureCard({ procedure }: ProcedureCardProps) {
               text-blue-700 hover:text-blue-800
               hover:bg-blue-50
               pl-0 hover:pl-2
-              transition-all
+              transition-all cursor-pointer
             "
           >
             Ver Detalles

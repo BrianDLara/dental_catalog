@@ -1,20 +1,17 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "react-oidc-context";
-
+import { Home, Settings, LogIn, Menu, X } from "lucide-react";
 
 import logo from "../images/logo_2.png";
-
-const COGNITO_DOMAIN =
-  "https://us-east-1q3u4ykfue.auth.us-east-1.amazoncognito.com";
 
 const Nav: React.FC = () => {
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
   const auth = useAuth();
 
-  const handleGoHome = () => {
-    navigate("/");
+  const go = (path: string) => {
+    navigate(path);
     setOpen(false);
   };
 
@@ -23,145 +20,137 @@ const Nav: React.FC = () => {
     auth.signinRedirect({ state: { from: window.location.pathname } });
   };
 
-  const handleLogout = async () => {
-    // Close menu immediately for better UX
-    setOpen(false);
-
-    // 1) Clear local tokens/session stored by react-oidc-context
-    await auth.removeUser();
-
-    // 2) Clear Cognito Hosted UI session
-    const clientId = import.meta.env.VITE_COGNITO_CLIENT_ID as string | undefined;
-    if (!clientId) {
-      console.error("Missing VITE_COGNITO_CLIENT_ID in env.");
-      // Even if missing, user is logged out locally already
-      return;
-    }
-
-    const logoutUri = window.location.origin + "/";
-
-    window.location.href =
-      `${COGNITO_DOMAIN}/logout?client_id=${clientId}&logout_uri=${encodeURIComponent(
-        logoutUri
-      )}`;
-  };
-
   return (
-    <div className="relative items-center">
-      {/* Top: Logo + Burger (mobile) */}
-      <div className="flex items-center justify-between px-4 xl:px-10 pt-1 xl:hidden">
-        <div className="z-10">
-          <Link to="/" onClick={() => setOpen(false)}>
-            <img
-              src={logo}
-              alt="Logo"
-              className="h-14 xl:h-26 w-auto"
+    <header className="sticky top-0 z-50 bg-white">
+      <div className="flex items-center justify-between px-4 xl:px-10 h-16">
+        {/* Logo */}
+        <Link
+          to="/"
+          onClick={() => setOpen(false)}
+          className="flex items-center gap-2 cursor-pointer"
+        >
+          <img src={logo} alt="Logo" className="h-10 xl:h-20 w-auto" />
+        </Link>
+
+        {/* Desktop nav */}
+        <nav className="hidden xl:flex items-center gap-4">
+          <NavButton
+            icon={<Home size={18} />}
+            label="Inicio"
+            onClick={() => go("/")}
+          />
+
+          {auth.isAuthenticated && (
+            <NavButton
+              icon={<Settings size={18} />}
+              label="Configuración"
+              onClick={() => go("/settings")}
+              variant="secondary"
             />
-          </Link>
-        </div>
+          )}
 
-        <button
-  type="button"
+          {!auth.isAuthenticated && !auth.isLoading && (
+            <NavButton
+              icon={<LogIn size={18} />}
+              label="Iniciar sesión"
+              onClick={handleLogin}
+              variant="outline"
+            />
+          )}
+        </nav>
+
+        {/* Mobile toggle */}
+<button
   onClick={() => setOpen((v) => !v)}
-  aria-label={open ? "Close menu" : "Open menu"}
-  aria-expanded={open}
-  className="
-    relative inline-flex h-11 w-11 items-center justify-center 
-    transition
-    focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FBB02E]/40 focus-visible:ring-offset-2 focus-visible:ring-offset-background
-  "
+  className="xl:hidden inline-flex items-center justify-center rounded-lg h-10 w-10 hover:bg-background transition cursor-pointer text-black hover:text-white"
+  aria-label="Toggle menu"
 >
-  <span className="sr-only">{open ? "Close menu" : "Open menu"}</span>
-
-  {/* Top line */}
-  <span
-    className={`
-      absolute h-[3px] w-6 rounded-full bg-[#FBB02E]
-      transition-all duration-300 ease-in-out
-      ${open ? "translate-y-0 rotate-45" : "-translate-y-2 rotate-0"}
-    `}
-  />
-
-  {/* Middle line */}
-  <span
-    className={`
-      absolute h-[3px] w-6 rounded-full bg-[#FBB02E]
-      transition-all duration-300 ease-in-out
-      ${open ? "opacity-0 scale-x-0" : "opacity-100 scale-x-100"}
-    `}
-  />
-
-  {/* Bottom line */}
-  <span
-    className={`
-      absolute h-[3px] w-6 rounded-full bg-[#FBB02E]
-      transition-all duration-300 ease-in-out
-      ${open ? "translate-y-0 -rotate-45" : "translate-y-2 rotate-0"}
-    `}
-  />
+  {open ? <X size={20} /> : <Menu size={20} />}
 </button>
       </div>
 
-      {/* Desktop logo */}
-      <div className="absolute left-4 xl:left-10 ml-2 xl:ml-4 z-10 hidden xl:block">
-        <Link to="/">
-          <img
-            src={logo}
-            alt="Senda Digital Marketing Logo"
-            className="h-14 xl:h-26 w-auto"
-          />
-        </Link>
-      </div>
+      {/* Mobile menu */}
+      {open && (
+        <div className="xl:hidden border-t bg-white text-black">
+          <div className="flex flex-col gap-1 p-4">
+            <MobileItem
+              icon={<Home size={18} />}
+              label="Inicio"
+              onClick={() => go("/")}
+            />
 
-      {/* Navbar Links */}
-      <div className="text-center pt-0 xl:pt-2 navbar-shadow">
-        <div className="mt-4 flex flex-col sm:flex-row xl:justify-end xl:items-center text-center">
-          <div className="w-full xl:w-1/3 space-y-4 xl:space-y-0 xl:space-x-6 text-center justify-center">
-            <div
-              className={`flex flex-col xl:flex-row gap-3 xl:justify-end items-center xl:mr-10 ${
-                open ? "flex" : "hidden"
-              } xl:flex`}
-            >
-              {/* Home */}
-              <button
-                type="button"
-                className="cursor-pointer rounded-lg bg-[#4C5270] px-5 py-2.5 text-sm font-medium text-primary-foreground hover:opacity-80 transition"
-                onClick={handleGoHome}
-              >
-                Página Principal
-              </button>
+            {auth.isAuthenticated && (
+              <MobileItem
+                icon={<Settings size={18} />}
+                label="Configuración"
+                onClick={() => go("/settings")}
+              />
+            )}
 
-              {/* Login / Logout */}
-              {!auth.isAuthenticated && !auth.isLoading && (
-                <button
-                  type="button"
-                  onClick={handleLogin}
-                  className="cursor-pointer rounded-lg border border-border bg-background px-5 py-2.5 text-sm font-medium hover:bg-accent transition"
-                >
-                  Iniciar sesión
-                </button>
-              )}
-
-              {auth.isAuthenticated && (
-                <button
-                  type="button"
-                  onClick={handleLogout}
-                  className="cursor-pointer rounded-lg border border-border bg-[#597EBF] px-5 py-2.5 text-sm font-medium hover:bg-red-800 hover:text-white transition"
-                >
-                  Cerrar sesión
-                </button>
-              )}
-            </div>
+            {!auth.isAuthenticated && !auth.isLoading && (
+              <MobileItem
+                icon={<LogIn size={18} />}
+                label="Iniciar sesión"
+                onClick={handleLogin}
+              />
+            )}
           </div>
         </div>
-      </div>
-      <div className="relative items-center pb-2">
-  </div>
-    </div>
-
-
-
+      )}
+    </header>
   );
 };
 
 export default Nav;
+
+/* ---------- helpers ---------- */
+
+function NavButton({
+  icon,
+  label,
+  onClick,
+  variant = "primary",
+}: {
+  icon: React.ReactNode;
+  label: string;
+  onClick: () => void;
+  variant?: "primary" | "secondary" | "outline";
+}) {
+  const base =
+    "inline-flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition cursor-pointer";
+
+  const variants = {
+    primary: "bg-primary text-primary-foreground hover:opacity-90",
+    secondary: "bg-accent hover:bg-accent/80",
+    outline:
+      "border bg-background/80 hover:bg-accent transition backdrop-blur",
+  };
+
+  return (
+    <button onClick={onClick} className={`${base} ${variants[variant]}`}>
+      {icon}
+      {label}
+    </button>
+  );
+}
+
+function MobileItem({
+  icon,
+  label,
+  onClick,
+}: {
+  icon: React.ReactNode;
+  label: string;
+  onClick: () => void;
+}) {
+  return (
+    <button
+      onClick={onClick}
+      className="flex items-center gap-3 rounded-lg px-3 py-3 text-sm font-medium hover:bg-background hover:text-white transition cursor-pointer"
+      
+    >
+      {icon}
+      {label}
+    </button>
+  );
+}

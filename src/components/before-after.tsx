@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { MoveHorizontal } from "lucide-react";
 
 interface BeforeAfterProps {
@@ -18,16 +18,23 @@ export function BeforeAfter({
   const [isDragging, setIsDragging] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
+  //measured width stored in state (so React re-renders when it's ready)
+  const [containerWidth, setContainerWidth] = useState<number>(0);
+
   const handleMove = (clientX: number) => {
-    if (!containerRef.current) return;
-    const rect = containerRef.current.getBoundingClientRect();
+    const el = containerRef.current;
+    if (!el) return;
+
+    const rect = el.getBoundingClientRect();
+    if (rect.width <= 0) return;
+
     const x = Math.max(0, Math.min(clientX - rect.left, rect.width));
     const percentage = (x / rect.width) * 100;
     setSliderPosition(percentage);
   };
 
   const handleMouseDown = (e: React.MouseEvent) => {
-    e.preventDefault(); // prevents selection/drag side-effects
+    e.preventDefault();
     setIsDragging(true);
     handleMove(e.clientX);
   };
@@ -53,6 +60,36 @@ export function BeforeAfter({
     return () => window.removeEventListener("mouseup", handleGlobalMouseUp);
   }, []);
 
+  // Measure after layout + keep updated on resize
+  useLayoutEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+
+    const measure = () => {
+      // Using getBoundingClientRect is generally safer than offsetWidth inside transformed layouts
+      const w = Math.round(el.getBoundingClientRect().width);
+      if (w > 0) setContainerWidth(w);
+    };
+
+    // measure now + after a couple frames
+    measure();
+    const raf1 = requestAnimationFrame(() => {
+      measure();
+      requestAnimationFrame(measure);
+    });
+
+    const ro = new ResizeObserver(() => measure());
+    ro.observe(el);
+
+    window.addEventListener("resize", measure);
+
+    return () => {
+      cancelAnimationFrame(raf1);
+      ro.disconnect();
+      window.removeEventListener("resize", measure);
+    };
+  }, []);
+
   return (
     <div className="w-full max-w-lg mx-auto select-none">
       <div
@@ -64,7 +101,7 @@ export function BeforeAfter({
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
         onTouchEnd={() => setIsDragging(false)}
-        onDragStart={(e) => e.preventDefault()} // extra safety
+        onDragStart={(e) => e.preventDefault()}
       >
         {/* After Image (Background) */}
         <img
@@ -89,7 +126,7 @@ export function BeforeAfter({
             draggable={false}
             onDragStart={(e) => e.preventDefault()}
             className="absolute inset-0 h-full w-full object-cover max-w-none pointer-events-none select-none"
-            style={{ width: containerRef.current?.offsetWidth || "100%" }}
+            style={{ width: containerWidth ? `${containerWidth}px` : "100%" }}
           />
           <div className="absolute top-4 left-4 bg-black/50 text-white px-2 py-1 rounded text-xs font-bold backdrop-blur-sm pointer-events-none">
             {beforeLabel}
