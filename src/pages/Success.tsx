@@ -127,7 +127,7 @@ export default function Success() {
                 </Link>
 
                 <Link
-                  to="/procedure/limpieza-dental"
+                  to="/procedure/limpieza"
                   className="inline-flex w-full justify-center rounded-lg border border-border px-5 py-3 text-sm font-semibold transition hover:bg-muted/40"
                 >
                   Ver un procedimiento ahora
