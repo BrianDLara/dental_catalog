@@ -365,7 +365,7 @@ export default function ProcedurePage() {
           >
             <SectionTitle>Antes y Después</SectionTitle>
 
-            <div className="bg-secondary p-6 rounded-2xl border shadow-sm">
+            <div className="no-protection bg-secondary p-6 rounded-2xl border shadow-sm">
               <BeforeAfter
                 beforeImage={procedure.beforeImage}
                 afterImage={procedure.afterImage}

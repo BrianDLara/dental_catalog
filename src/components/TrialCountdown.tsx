@@ -54,7 +54,7 @@ export default function TrialCountdown({
       </div>
 
       <p className="mt-1 text-xs text-amber-800/80">
-        Cuando termine, podrás desbloquear el catálogo completo con el pago único.
+        Al terminar tu prueba, podrás acceder a todos los procedimientos sin límites con un solo pago, sin mensualidades.
       </p>
     </div>
   );

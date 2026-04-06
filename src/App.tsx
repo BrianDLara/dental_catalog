@@ -5,6 +5,7 @@ import { useEffect } from "react";
 import Nav from "../src/components/Nav";
 import Footer from "../src/components/Footer";
 import GlobalTrialBanner from "./components/GlobalTrialBanner";
+import ContentProtection from "./components/ContentProtection";
 
 // Pages
 import Home from "../src/pages/Home";
@@ -38,6 +39,7 @@ const App = () => {
 
   return (
   <div className="h-dvh bg-white">
+    <ContentProtection />
     <GlobalTrialBanner />
     <header className="pt-3 xl:pt-2">
       <Nav />

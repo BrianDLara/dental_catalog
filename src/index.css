@@ -120,3 +120,29 @@
     @apply bg-background text-foreground font-sans antialiased;
   }
 }
+
+/* Block text selection on protected areas */
+.protected-content,
+.protected-content * {
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+/* Prevent image dragging */
+.protected-image {
+  -webkit-user-drag: none;
+  user-drag: none;
+  pointer-events: auto;
+}
+
+/* Optional: discourage long-press callouts on iPhone */
+.protected-image,
+.protected-content img {
+  -webkit-touch-callout: none;
+}
+
+.no-protection,
+.no-protection * {
+  user-select: auto !important;
+  pointer-events: auto !important;
+}
