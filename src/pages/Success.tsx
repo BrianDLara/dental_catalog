@@ -18,7 +18,7 @@ export default function Success() {
       if (cancelled) return;
 
       try {
-        await refreshEntitlement();
+                      await refreshEntitlement();
       } catch (e) {
         console.error("Polling error:", e);
       }

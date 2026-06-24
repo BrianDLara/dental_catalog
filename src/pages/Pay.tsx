@@ -37,7 +37,7 @@ export default function Pay() {
 
     if (!trialEndsAt) return;
 
-    const interval = window.setInterval(() => {
+      const interval = window.setInterval(() => {
       setRemaining(getRemainingMs(trialEndsAt));
     }, 1000);
 
@@ -74,12 +74,17 @@ export default function Pay() {
         throw new Error(text || "No se pudo iniciar el pago.");
       }
 
-      const data = (await res.json()) as { url: string };
-      window.location.href = data.url;
-    } catch (e: any) {
-      setErr(e?.message ?? "Ocurrió un error.");
-      setLoading(false);
-    }
+    const data = (await res.json()) as { url: string };
+window.location.href = data.url;
+} catch (e: unknown) {
+  if (e instanceof Error) {
+    setErr(e.message);
+  } else {
+    setErr("Ocurrió un error.");
+  }
+
+  setLoading(false);
+}
   };
 
   if (entitlementLoading) {

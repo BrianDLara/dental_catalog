@@ -4,7 +4,10 @@ import { cognitoLogout } from "../auth/logout";
 export default function Settings() {
   const auth = useAuth();
 
-  const email = (auth.user?.profile as any)?.email as string | undefined;
+  const email =
+    typeof auth.user?.profile.email === "string"
+      ? auth.user.profile.email
+      : undefined;
 
   const handleLogout = async () => {
     try {

@@ -15,30 +15,25 @@ function formatRemaining(ms: number): string {
   ].join(":");
 }
 
-function getRemainingMs(trialEndsAt: string): number {
+function getRemainingMs(trialEndsAt: string, now: number): number {
   const end = Date.parse(trialEndsAt);
   if (Number.isNaN(end)) return 0;
-  return Math.max(0, end - Date.now());
+  return Math.max(0, end - now);
 }
 
 export default function GlobalTrialBanner() {
   const { loading, isPaid, trialActive, trialEndsAt } = useEntitlement();
-  const [remaining, setRemaining] = useState(0);
+  const [now, setNow] = useState(() => Date.now());
 
   useEffect(() => {
-    if (!trialEndsAt) {
-      setRemaining(0);
-      return;
-    }
-
-    setRemaining(getRemainingMs(trialEndsAt));
-
     const interval = window.setInterval(() => {
-      setRemaining(getRemainingMs(trialEndsAt));
+      setNow(Date.now());
     }, 1000);
 
     return () => window.clearInterval(interval);
-  }, [trialEndsAt]);
+  }, []);
+
+  const remaining = trialEndsAt ? getRemainingMs(trialEndsAt, now) : 0;
 
   if (loading || isPaid || !trialActive || !trialEndsAt) return null;
 

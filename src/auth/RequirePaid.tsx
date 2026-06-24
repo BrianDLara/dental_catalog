@@ -11,14 +11,16 @@ export function RequirePaid({ children }: { children: ReactNode }) {
   const { loading, isPaid, trialActive, trialEndsAt } = useEntitlement();
 
   const redirectingRef = useRef(false);
+  const returnTo = loc.pathname + loc.search + loc.hash;
 
   useEffect(() => {
     if (redirectingRef.current) return;
 
     if (!auth.isLoading && !auth.isAuthenticated && !auth.error) {
       redirectingRef.current = true;
-      auth.signinRedirect({
-        state: { from: loc.pathname + loc.search + loc.hash },
+
+      void auth.signinRedirect({
+        state: { from: returnTo },
       });
     }
   }, [
@@ -26,14 +28,11 @@ export function RequirePaid({ children }: { children: ReactNode }) {
     auth.isAuthenticated,
     auth.error,
     auth,
-    loc.pathname,
-    loc.search,
-    loc.hash,
+    returnTo,
   ]);
 
   const isResolvingAuth =
-    auth.isLoading ||
-    (!auth.isAuthenticated && !auth.error && redirectingRef.current);
+    auth.isLoading || (!auth.isAuthenticated && !auth.error);
 
   if (isResolvingAuth) {
     return (
@@ -52,7 +51,9 @@ export function RequirePaid({ children }: { children: ReactNode }) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background p-6">
         <div className="max-w-md rounded-xl border bg-card p-6">
-          <p className="font-semibold text-foreground">Error de autenticación</p>
+          <p className="font-semibold text-foreground">
+            Error de autenticación
+          </p>
           <pre className="mt-3 text-sm text-muted-foreground whitespace-pre-wrap">
             {auth.error.message}
           </pre>
@@ -64,9 +65,7 @@ export function RequirePaid({ children }: { children: ReactNode }) {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
-        <p className="text-muted-foreground text-sm">
-          Verificando acceso…
-        </p>
+        <p className="text-muted-foreground text-sm">Verificando acceso…</p>
       </div>
     );
   }

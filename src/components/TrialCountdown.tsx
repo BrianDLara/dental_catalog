@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { Clock } from "lucide-react";
 
 function formatRemaining(ms: number): string {
@@ -14,10 +14,10 @@ function formatRemaining(ms: number): string {
   ].join(":");
 }
 
-function getRemainingMs(trialEndsAt: string): number {
+function getRemainingMs(trialEndsAt: string, now: number): number {
   const end = Date.parse(trialEndsAt);
   if (Number.isNaN(end)) return 0;
-  return Math.max(0, end - Date.now());
+  return Math.max(0, end - now);
 }
 
 export default function TrialCountdown({
@@ -25,21 +25,18 @@ export default function TrialCountdown({
 }: {
   trialEndsAt: string;
 }) {
-  const [remaining, setRemaining] = useState(() =>
-    getRemainingMs(trialEndsAt)
-  );
+  const [now, setNow] = useState(() => Date.now());
 
   useEffect(() => {
-    setRemaining(getRemainingMs(trialEndsAt));
-
     const interval = window.setInterval(() => {
-      setRemaining(getRemainingMs(trialEndsAt));
+      setNow(Date.now());
     }, 1000);
 
     return () => window.clearInterval(interval);
-  }, [trialEndsAt]);
+  }, []);
 
-  const active = useMemo(() => remaining > 0, [remaining]);
+  const remaining = getRemainingMs(trialEndsAt, now);
+  const active = remaining > 0;
 
   if (!active) return null;
 
@@ -54,7 +51,8 @@ export default function TrialCountdown({
       </div>
 
       <p className="mt-1 text-xs text-amber-800/80">
-        Al terminar tu prueba, podrás acceder a todos los procedimientos sin límites con un solo pago, sin mensualidades.
+        Al terminar tu prueba, podrás acceder a todos los procedimientos sin
+        límites con un solo pago, sin mensualidades.
       </p>
     </div>
   );
